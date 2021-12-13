@@ -3,7 +3,7 @@
 # 2021
 # Copyright - https://en.m.wikipedia.org/wiki/Fair_use
 # Modified by GH/WolverinexD 
-
+from anonfile import AnonFile
 import os, glob
 from os import error
 import logging
@@ -56,39 +56,23 @@ async def ping(bot, message):
 
 
 @bughunter0.on_message(filters.private & filters.command(["upload"]))
-async def getstickerasfile(bot, message):  
-    tx = await message.reply_text("Checking File...")
-    await tx.edit("Validating File...")
-    if message.reply_to_message.sticker is True:
-        await tx.edit("Not a Document File!!")
-    else :
-        try :     
-            tx = await message.reply_text("Downloading...")
-            file_path = DOWNLOAD_LOCATION + f"{message.chat.id}.tgs"
-            await message.reply_to_message.download(file_path)  
-            await tx.edit("Downloaded") 
-            #   zip_path= ZipFile.write("")
-            await tx.edit("Uploading...")
-            start = time.time()
-            await message.reply_document(file_path,caption="©@BugHunterBots")
-            await tx.delete()   
-            os.remove(file_path)
-            #   os.remove(zip_path)
-            except Exception as error:
-                print(error)
-                elif message.reply_to_message.sticker.is_animated is False:        
-                    try : 
-                       tx = await message.reply_text("Downloading...")
-                       file_path = DOWNLOAD_LOCATION + f"{message.chat.id}.png"
-                       await message.reply_to_message.download(file_path)   
-                       await tx.edit("Downloaded")
-                       await tx.edit("Uploading...")
-                       start = time.time()
-                       await message.reply_document(file_path,caption="©@BugHunterBots")
-                       await tx.delete()   
-                       os.remove(file_path)
-                   except Exception as error:
-                       print(error)
+async def uploadfile(bot, message):  
+    tx = await message.reply_text("Checking File...")    
+    tx.edit("Downloading...")
+    file_path = DOWNLOAD_LOCATION + f"{message.chat.id}.zip"
+    await message.reply_to_message.download(file_path)  
+    await tx.edit("Downloaded") 
+    anon = AnonFile()
+    upload = anon.upload('file_path', progressbar=False)
+    await tx.edit("Uploading...")
+    start = time.time()
+    await message.reply_text("URL : {upload.url.geturl()}")
+    await tx.delete()   
+    os.remove(file_path)
+    #   os.remove(zip_path)
+    except Exception as e:
+        print(e)
+        await message.reply_text("Error : {e}")
 
 @bughunter0.on_message(filters.private & filters.command(["clearcache"]))
 async def clearcache(bot, message):   
